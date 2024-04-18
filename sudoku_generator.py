@@ -69,9 +69,36 @@ class SudokuGenerator:
         for i in range(3):
             self.fill_box(i*3, i*3)
 
+    def fill_remaining(self, row, col):
+        if (col >= self.row_length and row < self.row_length - 1):
+            row += 1
+            col = 0
+        if row >= self.row_length and col >= self.row_length:
+            return True
+        if row < self.box_length:
+            if col < self.box_length:
+                col = self.box_length
+        elif row < self.row_length - self.box_length:
+            if col == int(row // self.box_length * self.box_length):
+                col += self.box_length
+        else:
+            if col == self.row_length - self.box_length:
+                row += 1
+                col = 0
+                if row >= self.row_length:
+                    return True
+
+        for num in range(1, self.row_length + 1):
+            if self.is_valid(row, col, num):
+                self.board[row][col] = num
+                if self.fill_remaining(row, col + 1):
+                    return True
+                self.board[row][col] = 0
+        return False
+
     def fill_values(self):
         self.fill_diagonal()
-        self.fill_remaining()
+        self.fill_remaining(0, self.box_length)
 
     def remove_cells(self):
         i = 0
@@ -86,7 +113,8 @@ class SudokuGenerator:
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
     sudoku.fill_values()
-    board = SudokuGenerator(removed, size)
-    board.remove_cells()
-    return board.get_board()
+    board = sudoku.get_board()
+    sudoku.remove_cells()
+    board = sudoku.get_board()
+    return board
 
