@@ -11,7 +11,7 @@ class SudokuGenerator:
                 temp.append(0)
             self.board.append(temp)
         self.removed_cells = removed_cells
-        self.box_length = row_length**0.5
+        self.box_length = int(row_length**0.5)
 
     def get_board(self):
         returned_board = []
@@ -117,4 +117,3 @@ def generate_sudoku(size, removed):
     sudoku.remove_cells()
     board = sudoku.get_board()
     return board
-
