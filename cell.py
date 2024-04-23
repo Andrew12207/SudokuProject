@@ -33,3 +33,5 @@ class Cell:
             pygame.draw.rect(self.screen, (255, 0, 0), (x, y, self.cell_size, self.cell_size), 3)
         else:
             pygame.draw.rect(self.screen, (0, 0, 0), (x, y, self.cell_size, self.cell_size), 1)
+    def toggle_selected(self):
+    self.selected = not self.selected
