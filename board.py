@@ -38,3 +38,29 @@ class Board:
         for row in range(self.rows):
             for col in range(self.cols):
                 self.cells[row][col].draw()
+
+def click(self, x, y):
+    cell_size = self.width / 9
+    row = y // cell_size
+    col = x // cell_size
+    if 0 <= row < 9 and 0 <= col < 9:
+        self.cells[row][col].toggle_selected()
+        return row, col
+    else:
+        return None
+
+def clear(self):
+    if self.selected_cell:
+        self.cells[self.selected_cell[0]][self.selected_cell[1]].set_cell_value(0)
+
+def sketch(self, value):
+    if self.selected_cell:
+        self.cells[self.selected_cell[0]][self.selected_cell[1]].set_sketched_value(value)
+
+def place_number(self, value):
+    if self.selected_cell:
+        self.cells[self.selected_cell[0]][self.selected_cell[1]].set_cell_value(value)
+
+def select(self, row, col):
+    self.selected_cell = (row, col)
+
