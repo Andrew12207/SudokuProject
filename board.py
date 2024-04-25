@@ -5,6 +5,7 @@ from sudoku_generator import SudokuGenerator
 
 class Board:
     global final_sudoku
+
     def __init__(self, width, height, screen, difficulty):
         self.rows = 9
         self.cols = 9
@@ -15,6 +16,8 @@ class Board:
         self.difficulty = difficulty
         self.selected_cell = None
         self.generate_board()
+        self.cell_is_toggled = False
+        self.toggled_cell_pos = None
 
     def generate_board(self):
         sudoku = SudokuGenerator(self.difficulty)
@@ -28,30 +31,40 @@ class Board:
 
     def draw(self):
         for i in range(self.rows + 1):
-            if i % 3 == 0 and i != 0:
-                thickness = 4
+            if i % 3 == 0 and i != 0 and i != 9:
+                thickness = 5
             else:
                 thickness = 1
-            #I do not think this is changing anything
-            #pygame.draw.line(self.screen, (0, 0, 0), (i * self.width / 9, 0), (i * self.width / 9, self.height),
-                            # thickness)
-            #pygame.draw.line(self.screen, (0, 0, 0), (0, i * self.height / 9), (self.width, i * self.height / 9),
-                            # thickness)
-
+            pygame.draw.line(self.screen, (0, 0, 0), (i*40+135, 30), (i*40+135, self.height), thickness)
+            pygame.draw.line(self.screen, (0, 0, 0), (135, i*40+30), (self.width, i*40+30), thickness)
+        pygame.draw.line(self.screen, (0, 0, 0), (135, 30), (135, self.height), 5)
+        pygame.draw.line(self.screen, (0, 0, 0), (133, 30), (self.width, 30), 5)
+        pygame.draw.line(self.screen, (0, 0, 0), (495, 28), (495, self.height), 5)
+        pygame.draw.line(self.screen, (0, 0, 0), (133, 390), (self.width+2, 390), 5)
         for row in range(self.rows):
             for col in range(self.cols):
                 self.cells[row][col].draw()
 
-    #error occurring
     def click(self, x, y):
-        cell_size = self.width / 9
-        row = y // cell_size
-        col = x // cell_size
+        cell_size = (self.width-135) / 9
+        row = int((y-30) // cell_size)
+        col = int((x-135) // cell_size)
         if 0 <= row < 9 and 0 <= col < 9:
-            self.cells[row][col].toggle_selected()
-            return row, col
+            if self.cell_is_toggled and self.toggled_cell_pos != (row, col):
+                return False
+            elif self.cell_is_toggled and self.toggled_cell_pos == (row, col):
+                self.cells[row][col].toggle_selected()
+                self.toggled_cell_pos = None
+                self.cell_is_toggled = False
+                return False
+            else:
+                self.cells[row][col].toggle_selected()
+                self.cells[row][col].draw()
+                self.toggled_cell_pos = (row, col)
+                self.cell_is_toggled = True
+                return True
         else:
-            return None
+            return False
 
     def clear(self):
         if self.selected_cell:
@@ -68,7 +81,10 @@ class Board:
     def select(self, row, col):
         self.selected_cell = (row, col)
         return self.selected_cell
-    #def is_full(self):
+
+    def is_full(self):
+        pass
+
     def find_empty(self):
         for row in range(9):
             for col in range(9):
