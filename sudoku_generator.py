@@ -70,7 +70,7 @@ class SudokuGenerator:
             self.fill_box(i*3, i*3)
 
     def fill_remaining(self, row, col):
-        if (col >= self.row_length and row < self.row_length - 1):
+        if col >= self.row_length and row < self.row_length - 1:
             row += 1
             col = 0
         if row >= self.row_length and col >= self.row_length:

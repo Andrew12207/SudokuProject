@@ -4,7 +4,6 @@ from sudoku_generator import SudokuGenerator
 
 
 class Board:
-    global final_sudoku
 
     def __init__(self, width, height, screen, difficulty):
         self.rows = 9
@@ -15,19 +14,29 @@ class Board:
         self.screen = screen
         self.difficulty = difficulty
         self.selected_cell = None
+        self.board = None
+        self.sudoku = None
+        self.final_sudoku = None
         self.generate_board()
         self.cell_is_toggled = False
         self.toggled_cell_pos = None
 
     def generate_board(self):
-        sudoku = SudokuGenerator(self.difficulty)
-        final_sudoku = sudoku.fill_values()
-        sudoku.remove_cells()
-        board = sudoku.get_board()
+        self.sudoku = SudokuGenerator(self.difficulty)
+        self.sudoku.fill_values()
+        self.final_sudoku = self.sudoku.get_board()
+        self.sudoku.remove_cells()
+        self.board = self.sudoku.get_board()
         for i in range(self.rows):
             for j in range(self.cols):
-                self.cells[i][j].set_cell_value(board[i][j])
-        return final_sudoku
+                self.cells[i][j].set_cell_value(self.board[i][j])
+        return self.final_sudoku
+
+    def generate_initial_board(self):
+        self.board = self.sudoku.get_board()
+        for i in range(self.rows):
+            for j in range(self.cols):
+                self.cells[i][j].set_cell_value(self.board[i][j])
 
     def draw(self):
         for i in range(self.rows + 1):
@@ -51,7 +60,12 @@ class Board:
         col = int((x-135) // cell_size)
         if 0 <= row < 9 and 0 <= col < 9:
             if self.cell_is_toggled and self.toggled_cell_pos != (row, col):
-                return False
+                self.cells[self.toggled_cell_pos[0]][self.toggled_cell_pos[1]].toggle_selected()
+                self.cells[row][col].toggle_selected()
+                self.cells[row][col].draw()
+                self.toggled_cell_pos = (row, col)
+                self.cell_is_toggled = True
+                return True
             elif self.cell_is_toggled and self.toggled_cell_pos == (row, col):
                 self.cells[row][col].toggle_selected()
                 self.toggled_cell_pos = None
@@ -66,47 +80,44 @@ class Board:
         else:
             return False
 
-    def clear(self):
-        if self.selected_cell:
-            self.cells[self.selected_cell[0]][self.selected_cell[1]].set_cell_value(0)
-
-    def sketch(self, value):
-        if self.selected_cell:
-            self.cells[self.selected_cell[0]][self.selected_cell[1]].set_sketched_value(value)
-
     def place_number(self, value):
-        if self.selected_cell:
-            self.cells[self.selected_cell[0]][self.selected_cell[1]].set_cell_value(value)
+        empty_cells = self.find_empty()
+        if self.cell_is_toggled and self.toggled_cell_pos in empty_cells:
+            self.cells[self.toggled_cell_pos[0]][self.toggled_cell_pos[1]].set_cell_value(value)
+            self.sudoku.board[self.toggled_cell_pos[0]][self.toggled_cell_pos[1]] = value
+        y = (self.toggled_cell_pos[0]+30+self.toggled_cell_pos[0]*40)
+        x = (self.toggled_cell_pos[1]+135+self.toggled_cell_pos[1]*40)
+        self.click(x, y)
 
     def select(self, row, col):
         self.selected_cell = (row, col)
         return self.selected_cell
 
-    def is_full(self):
-        pass
-
     def find_empty(self):
+        empty_cells = []
         for row in range(9):
             for col in range(9):
-                if self.cells[row][col] not in range(1, 10):
-                    return row, col
+                if self.board[row][col] not in range(1, 10):
+                    empty_cells.append((row, col))
+        return empty_cells
 
+    def find_current_empty(self):
+        empty_cells = []
+        for row in range(9):
+            for col in range(9):
+                if self.sudoku.get_board()[row][col] not in range(1, 10):
+                    empty_cells.append((row, col))
+        return empty_cells
 
-    def check_board(self):
-        if self.get_board == final_sudoku.get_board:
+    def is_full(self):
+        empty_cells = self.find_current_empty()
+        if len(empty_cells) == 0:
             return True
         else:
             return False
 
-    def update_board(self):
-        new_value = current_board.self_selected_cell.set_cell_value(1)
-        current_board.place_number(new_value)
-        current_board.draw()
-
-
-    '''def reset_to_original(self):
-        if check_board == False:
-           ='''
-
-
-
+    def check_board(self):
+        if self.sudoku.get_board() == self.final_sudoku:
+            return True
+        else:
+            return False

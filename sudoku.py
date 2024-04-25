@@ -1,6 +1,5 @@
 import pygame
 import sys
-from sudoku_generator import SudokuGenerator
 from board import Board
 
 SCREEN_SIZE = (650, 600)
@@ -38,7 +37,7 @@ def handle_mouse_click(pos):
     if not in_game:
         while not in_game:
             if easy_btn.collidepoint(pos):
-                current_board = Board(BOARD_WIDTH, BOARD_HEIGHT, screen, 30)
+                current_board = Board(BOARD_WIDTH, BOARD_HEIGHT, screen, 1)
                 initial_board = current_board
                 current_board.draw()
                 in_game = True
@@ -62,7 +61,8 @@ def handle_mouse_click(pos):
                 current_board = None
                 in_game = False
             elif reset_btn.collidepoint(pos):
-                current_board = initial_board
+                current_board.generate_initial_board()
+                current_board.draw()
                 break
             elif exit_btn.collidepoint(pos):
                 pygame.quit()
@@ -81,30 +81,36 @@ while running:
             handle_mouse_click(pygame.mouse.get_pos())
 
         if event.type == pygame.KEYUP:
-            pos = pygame.mouse.get_pos()
-            row, col = current_board.click(pos[0], pos[1])
-            self_selected_cell = current_board.select(pos[0], pos[1])
-            if event.key == pygame.K_1:
-                #new_value = current_board.self_selected_cell.set_cell_value()
-                current_board.place_number(1)
-                current_board.draw()
-            elif event.key == pygame.K_2:
-                Board.cells.set_cell_value(2)
-            elif event.key == pygame.K_3:
-                Board.cells.set_cell_value(3)
-            elif event.key == pygame.K_4:
-                Board.cells.set_cell_value(4)
-            elif event.key == pygame.K_5:
-                Board.cells.set_cell_value(5)
-            elif event.key == pygame.K_6:
-                Board.cells.set_cell_value(6)
-            elif event.key == pygame.K_7:
-                Board.cells.set_cell_value(7)
-            elif event.key == pygame.K_8:
-                Board.cells.set_cell_value(8)
-            elif event.key == pygame.K_9:
-                Board.cells.set_cell_value(9)
-
+            if current_board.cell_is_toggled:
+                pos = pygame.mouse.get_pos()
+                self_selected_cell = current_board.select(pos[0], pos[1])
+                if event.key == pygame.K_1:
+                    current_board.place_number(1)
+                    current_board.draw()
+                elif event.key == pygame.K_2:
+                    current_board.place_number(2)
+                    current_board.draw()
+                elif event.key == pygame.K_3:
+                    current_board.place_number(3)
+                    current_board.draw()
+                elif event.key == pygame.K_4:
+                    current_board.place_number(4)
+                    current_board.draw()
+                elif event.key == pygame.K_5:
+                    current_board.place_number(5)
+                    current_board.draw()
+                elif event.key == pygame.K_6:
+                    current_board.place_number(6)
+                    current_board.draw()
+                elif event.key == pygame.K_7:
+                    current_board.place_number(7)
+                    current_board.draw()
+                elif event.key == pygame.K_8:
+                    current_board.place_number(8)
+                    current_board.draw()
+                elif event.key == pygame.K_9:
+                    current_board.place_number(9)
+                    current_board.draw()
 
     screen.fill(BACKGROUND_COLOR)
 
@@ -120,12 +126,22 @@ while running:
         easy_btn = draw_button("EASY", SCREEN_SIZE[0] // 2 - 75, 325)
         medium_btn = draw_button("MEDIUM", SCREEN_SIZE[0] // 2 - 75, 400)
         hard_btn = draw_button("HARD", SCREEN_SIZE[0] // 2 - 75, 475)
-
     else:
         current_board.draw()
         reset_btn = draw_button("RESET", SCREEN_SIZE[0] // 2 - 225, 400, 125)
         restart_btn = draw_button("RESTART", SCREEN_SIZE[0] // 2 - 75, 400, 125)
         exit_btn = draw_button("EXIT", SCREEN_SIZE[0] // 2 + 75, 400, 125)
+
+        if current_board.is_full():
+            if current_board.check_board():
+                print("You won")
+                current_board = None
+                in_game = False
+            else:
+                print("You lost")
+                current_board = None
+                in_game = False
+
     pygame.display.flip()
 
 pygame.quit()
