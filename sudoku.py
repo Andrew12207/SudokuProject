@@ -22,6 +22,8 @@ font = pygame.font.Font(None, 36)
 current_board = None
 initial_board = None
 in_game = False
+win = False
+lose = False
 
 
 def draw_button(text, x, y, w=150, h=50):
@@ -33,11 +35,11 @@ def draw_button(text, x, y, w=150, h=50):
 
 
 def handle_mouse_click(pos):
-    global current_board, initial_board, in_game
+    global current_board, initial_board, in_game, lose
     if not in_game:
         while not in_game:
             if easy_btn.collidepoint(pos):
-                current_board = Board(BOARD_WIDTH, BOARD_HEIGHT, screen, 30)
+                current_board = Board(BOARD_WIDTH, BOARD_HEIGHT, screen, 1)
                 initial_board = current_board
                 current_board.draw()
                 in_game = True
@@ -55,11 +57,10 @@ def handle_mouse_click(pos):
                 break
     else:
         while in_game:
-            if current_board.click(pos[0], pos[1]):
-                break
-            elif restart_btn.collidepoint(pos):
+            if restart_btn.collidepoint(pos):
                 current_board = None
                 in_game = False
+                lose = False
             elif reset_btn.collidepoint(pos):
                 current_board.generate_initial_board()
                 current_board.draw()
@@ -67,6 +68,8 @@ def handle_mouse_click(pos):
             elif exit_btn.collidepoint(pos):
                 pygame.quit()
                 sys.exit()
+            elif current_board.click(pos[0], pos[1]):
+                break
             else:
                 break
 
@@ -127,20 +130,30 @@ while running:
         medium_btn = draw_button("MEDIUM", SCREEN_SIZE[0] // 2 - 75, 400)
         hard_btn = draw_button("HARD", SCREEN_SIZE[0] // 2 - 75, 475)
     else:
-        current_board.draw()
-        reset_btn = draw_button("RESET", SCREEN_SIZE[0] // 2 - 225, 400, 125)
-        restart_btn = draw_button("RESTART", SCREEN_SIZE[0] // 2 - 75, 400, 125)
-        exit_btn = draw_button("EXIT", SCREEN_SIZE[0] // 2 + 75, 400, 125)
+        if not (win+lose):
+            current_board.draw()
+            reset_btn = draw_button("RESET", SCREEN_SIZE[0] // 2 - 225, 400, 125)
+            restart_btn = draw_button("RESTART", SCREEN_SIZE[0] // 2 - 75, 400, 125)
+            exit_btn = draw_button("EXIT", SCREEN_SIZE[0] // 2 + 75, 400, 125)
 
-        if current_board.is_full():
-            if current_board.check_board():
-                print("You won")
-                current_board = None
-                in_game = False
-            else:
-                print("You lost")
-                current_board = None
-                in_game = False
+            if current_board.is_full():
+                if current_board.check_board():
+                    win = True
+                else:
+                    lose = True
+        if win:
+            current_board = None
+            win_screen_text = font.render("Game Won!", True, (0, 0, 0))
+            win_screen_text_rect = win_screen_text.get_rect(center=(SCREEN_SIZE[0] // 2, 200))
+            screen.blit(win_screen_text, win_screen_text_rect)
+            exit_btn = draw_button("EXIT", SCREEN_SIZE[0] // 2 - 75, 300, 150)
+
+        elif lose:
+            current_board = None
+            lose_screen_text = font.render("Game Over :(", True, (0, 0, 0))
+            lose_screen_text_rect = lose_screen_text.get_rect(center=(SCREEN_SIZE[0] // 2, 150))
+            screen.blit(lose_screen_text, lose_screen_text_rect)
+            restart_btn = draw_button("RESTART", SCREEN_SIZE[0] // 2 - 75, 300, 150)
 
     pygame.display.flip()
 
