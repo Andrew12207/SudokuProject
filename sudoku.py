@@ -37,7 +37,7 @@ def handle_mouse_click(pos):
     if not in_game:
         while not in_game:
             if easy_btn.collidepoint(pos):
-                current_board = Board(BOARD_WIDTH, BOARD_HEIGHT, screen, 1)
+                current_board = Board(BOARD_WIDTH, BOARD_HEIGHT, screen, 30)
                 initial_board = current_board
                 current_board.draw()
                 in_game = True
