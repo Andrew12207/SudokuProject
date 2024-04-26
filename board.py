@@ -17,6 +17,7 @@ class Board:
         self.board = None
         self.sudoku = None
         self.final_sudoku = None
+        self.initial_sudoku = None
         self.generate_board()
         self.cell_is_toggled = False
         self.toggled_cell_pos = None
@@ -27,16 +28,24 @@ class Board:
         self.final_sudoku = self.sudoku.get_board()
         self.sudoku.remove_cells()
         self.board = self.sudoku.get_board()
+        self.initial_sudoku = self.sudoku.get_board()
         for i in range(self.rows):
             for j in range(self.cols):
                 self.cells[i][j].set_cell_value(self.board[i][j])
         return self.final_sudoku
 
     def generate_initial_board(self):
-        self.board = self.sudoku.get_board()
+        self.board = self.initial_sudoku
         for i in range(self.rows):
             for j in range(self.cols):
                 self.cells[i][j].set_cell_value(self.board[i][j])
+                self.cells[i][j].set_sketched_value(0)
+        try:
+            y = (self.toggled_cell_pos[0] + 30 + self.toggled_cell_pos[0] * 40)
+            x = (self.toggled_cell_pos[1] + 135 + self.toggled_cell_pos[1] * 40)
+            self.click(x, y)
+        except:
+            pass
 
     def draw(self):
         for i in range(self.rows + 1):
@@ -80,7 +89,13 @@ class Board:
         else:
             return False
 
+    def sketch(self, value):
+        empty_cells = self.find_empty()
+        if self.cell_is_toggled and self.toggled_cell_pos in empty_cells:
+            self.cells[self.toggled_cell_pos[0]][self.toggled_cell_pos[1]].set_sketched_value(value)
+
     def place_number(self, value):
+        value = self.cells[self.toggled_cell_pos[0]][self.toggled_cell_pos[1]].sketched_value
         empty_cells = self.find_empty()
         if self.cell_is_toggled and self.toggled_cell_pos in empty_cells:
             self.cells[self.toggled_cell_pos[0]][self.toggled_cell_pos[1]].set_cell_value(value)
@@ -97,7 +112,7 @@ class Board:
         empty_cells = []
         for row in range(9):
             for col in range(9):
-                if self.board[row][col] not in range(1, 10):
+                if self.initial_sudoku[row][col] not in range(1, 10):
                     empty_cells.append((row, col))
         return empty_cells
 

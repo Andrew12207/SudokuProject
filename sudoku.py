@@ -88,32 +88,36 @@ while running:
                 pos = pygame.mouse.get_pos()
                 self_selected_cell = current_board.select(pos[0], pos[1])
                 if event.key == pygame.K_1:
-                    current_board.place_number(1)
+                    current_board.sketch(1)
                     current_board.draw()
                 elif event.key == pygame.K_2:
-                    current_board.place_number(2)
+                    current_board.sketch(2)
                     current_board.draw()
                 elif event.key == pygame.K_3:
-                    current_board.place_number(3)
+                    current_board.sketch(3)
                     current_board.draw()
                 elif event.key == pygame.K_4:
-                    current_board.place_number(4)
+                    current_board.sketch(4)
                     current_board.draw()
                 elif event.key == pygame.K_5:
-                    current_board.place_number(5)
+                    current_board.sketch(5)
                     current_board.draw()
                 elif event.key == pygame.K_6:
-                    current_board.place_number(6)
+                    current_board.sketch(6)
                     current_board.draw()
                 elif event.key == pygame.K_7:
-                    current_board.place_number(7)
+                    current_board.sketch(7)
                     current_board.draw()
                 elif event.key == pygame.K_8:
-                    current_board.place_number(8)
+                    current_board.sketch(8)
                     current_board.draw()
                 elif event.key == pygame.K_9:
-                    current_board.place_number(9)
+                    current_board.sketch(9)
                     current_board.draw()
+                elif event.key == pygame.K_RETURN:
+                    current_board.place_number(None)
+                    current_board.draw()
+
 
     screen.fill(BACKGROUND_COLOR)
 
@@ -130,7 +134,7 @@ while running:
         medium_btn = draw_button("MEDIUM", SCREEN_SIZE[0] // 2 - 75, 400)
         hard_btn = draw_button("HARD", SCREEN_SIZE[0] // 2 - 75, 475)
     else:
-        if not (win+lose):
+        if not win and not lose:
             current_board.draw()
             reset_btn = draw_button("RESET", SCREEN_SIZE[0] // 2 - 225, 400, 125)
             restart_btn = draw_button("RESTART", SCREEN_SIZE[0] // 2 - 75, 400, 125)
