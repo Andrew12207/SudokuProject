@@ -135,6 +135,9 @@ while running:
                     if x > 135+40:
                         x = x - 40
                         current_board.click(x, y)
+                elif event.key == pygame.K_BACKSPACE:
+                    current_board.clear()
+                    current_board.draw()
 
     screen.fill(BACKGROUND_COLOR)
 

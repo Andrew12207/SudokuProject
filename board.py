@@ -89,6 +89,13 @@ class Board:
         else:
             return False
 
+    def clear(self):
+        empty_cells = self.find_empty()
+        if self.cell_is_toggled and self.toggled_cell_pos in empty_cells:
+            self.cells[self.toggled_cell_pos[0]][self.toggled_cell_pos[1]].set_sketched_value(0)
+            self.cells[self.toggled_cell_pos[0]][self.toggled_cell_pos[1]].set_cell_value(0)
+            self.sudoku.board[self.toggled_cell_pos[0]][self.toggled_cell_pos[1]] = 0
+
     def sketch(self, value):
         empty_cells = self.find_empty()
         if self.cell_is_toggled and self.toggled_cell_pos in empty_cells:
@@ -100,9 +107,6 @@ class Board:
         if self.cell_is_toggled and self.toggled_cell_pos in empty_cells:
             self.cells[self.toggled_cell_pos[0]][self.toggled_cell_pos[1]].set_cell_value(value)
             self.sudoku.board[self.toggled_cell_pos[0]][self.toggled_cell_pos[1]] = value
-        # y = (self.toggled_cell_pos[0]+30+self.toggled_cell_pos[0]*40)
-        # x = (self.toggled_cell_pos[1]+135+self.toggled_cell_pos[1]*40)
-        # self.click(x, y)
 
     def select(self, row, col):
         self.selected_cell = (row, col)
