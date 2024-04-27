@@ -120,17 +120,21 @@ while running:
                     current_board.place_number(None)
                     current_board.draw()
                 elif event.key == pygame.K_UP:
-                    y = y - 40
-                    current_board.click(x, y)
+                    if y > 70:
+                        y = y - 40
+                        current_board.click(x, y)
                 elif event.key == pygame.K_DOWN:
-                    y = y + 40
-                    current_board.click(x, y)
+                    if y < BOARD_HEIGHT - 40:
+                        y = y + 40
+                        current_board.click(x, y)
                 elif event.key == pygame.K_RIGHT:
-                    x = x + 40
-                    current_board.click(x, y)
+                    if x < BOARD_WIDTH - 40:
+                        x = x + 40
+                        current_board.click(x, y)
                 elif event.key == pygame.K_LEFT:
-                    x = x - 40
-                    current_board.click(x, y)
+                    if x > 135+40:
+                        x = x - 40
+                        current_board.click(x, y)
 
     screen.fill(BACKGROUND_COLOR)
 
