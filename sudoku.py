@@ -3,9 +3,9 @@ import sys
 from board import Board
 
 SCREEN_SIZE = (650, 600)
-BUTTON_COLOR = (210, 180, 140)
+BUTTON_COLOR = (220, 231, 243)
 BUTTON_TEXT_COLOR = (0, 0, 0)
-BACKGROUND_COLOR = (255, 255, 255)
+BACKGROUND_COLOR = (255, 228, 225)
 GRID_COLOR = (50, 50, 150)
 BOARD_MARGIN = 10
 BOARD_HEIGHT = 390
@@ -31,6 +31,8 @@ def draw_button(text, x, y, w=150, h=50):
     text_surf = font.render(text, True, BUTTON_TEXT_COLOR)
     text_rect = text_surf.get_rect(center=(x + w / 2, y + h / 2))
     screen.blit(text_surf, text_rect)
+    for i in range(4):
+        pygame.draw.rect(screen, (0, 0, 0), (x, y, w, h), 1)
     return pygame.Rect(x, y, w, h)
 
 
@@ -117,7 +119,18 @@ while running:
                 elif event.key == pygame.K_RETURN:
                     current_board.place_number(None)
                     current_board.draw()
-
+                elif event.key == pygame.K_UP:
+                    y = y - 40
+                    current_board.click(x, y)
+                elif event.key == pygame.K_DOWN:
+                    y = y + 40
+                    current_board.click(x, y)
+                elif event.key == pygame.K_RIGHT:
+                    x = x + 40
+                    current_board.click(x, y)
+                elif event.key == pygame.K_LEFT:
+                    x = x - 40
+                    current_board.click(x, y)
 
     screen.fill(BACKGROUND_COLOR)
 
